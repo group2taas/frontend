@@ -1,6 +1,7 @@
 import { Status } from "./enums"
 
 export interface UserProfile {
+    uid: string;
     name: string;
     phone: string;
     email: string;

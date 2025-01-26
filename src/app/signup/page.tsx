@@ -29,8 +29,9 @@ const SignUp = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, password);
       const token = await userCredential.user.getIdToken();
       storeToken(token);
-
+      
       await createUserProfile(formData.email, password, {
+        uid: userCredential.user.uid,
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
