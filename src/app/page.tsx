@@ -28,14 +28,7 @@ const MainPage: NextPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar
-        userProfile={{
-          name: 'John Doe',
-          company_name: 'Acme Corp',
-          email: 'Test@test.com',
-          phone: '1231023',
-        }}
-      />
+      <Navbar />
       <div className="flex mt-6">
         {/* Main Content */}
         <div className="w-4/5 p-4 overflow-y-auto">
