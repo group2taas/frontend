@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { storeToken } from "@/utils/token";
 import { useRouter } from "next/navigation";
 import { auth } from "@/configs/configs";
+import { exchangeFirebaseToken } from "@/utils/token";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,8 +18,9 @@ const Login = () => {
     e.preventDefault();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCredential.user.getIdToken();
-      storeToken(token);
+      const firebaseToken = await userCredential.user.getIdToken();
+      const data = await exchangeFirebaseToken(firebaseToken)
+      storeToken(data.access);
 
       router.push("/");
     } catch (err: any) {

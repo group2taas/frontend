@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { createUserProfile } from "@/requests/user-profile-actions";
 import { storeToken } from "@/utils/token";
 import { useRouter } from "next/navigation";
 import { auth } from "@/configs/configs";
+import { createUserWithToken } from "@/utils/token";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -26,18 +26,20 @@ const SignUp = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, password);
-      const token = await userCredential.user.getIdToken();
-      storeToken(token);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        password
+      );
+      const firebaseToken = await userCredential.user.getIdToken();
       
-      await createUserProfile(formData.email, password, {
-        uid: userCredential.user.uid,
+      const { access } = await createUserWithToken(firebaseToken, {
         name: formData.name,
         phone: formData.phone,
-        email: formData.email,
-        company_name: formData.company_name,
-      });
+        company_name: formData.company_name
+      })
 
+      storeToken(access);
       router.push("/");
     } catch (err: any) {
       setError(err.message || "Sign up failed. Please try again.");
