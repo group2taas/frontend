@@ -2,9 +2,13 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/navbar';
+import { useRouter } from 'next/navigation';
 import Accordion from '@/components/accordion';
+import { createTicket } from '@/requests/ticket-actions';
 
 const CreateTicket = () => {
+  const router = useRouter();
+  
   const [formData, setFormData] = useState<{
     specificTimeWindow: string;
     clientRepresentative: any;
@@ -106,10 +110,14 @@ const CreateTicket = () => {
     }
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    alert('Form submitted successfully!');
+    try {
+      await createTicket(formData);
+      router.push('/');
+    } catch (error) {
+      alert('Failed to create ticket. Please try again.');
+    }
   };
 
   return (
