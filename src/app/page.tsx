@@ -1,22 +1,32 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
 import Ticket from '@/components/ticket';
 import { useRouter } from 'next/navigation';
 import { Status } from '@/types/enums';
 import { Tickets, UserProfile } from '@/types/mongo-documents';
 import { NextPage } from 'next';
-
-const fakeTickets: Tickets[] = [
-  { id: 1, title: 'Fix login bug', status: Status.COMPLETED, createdAt: new Date() },
-  { id: 2, title: 'Implement dashboard', status: Status.TESTING, createdAt: new Date() },
-  { id: 3, title: 'Add search functionality', status: Status.APPROVAL, createdAt: new Date() },
-  { id: 4, title: 'Refactor codebase', status: Status.ESTIMATING_TESTS, createdAt: new Date() },
-];
+import { fetchTickets } from '@/requests/ticket-actions';
 
 const MainPage: NextPage = () => {
   const router = useRouter();
+  const [tickets, setTickets] = useState<Tickets[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadTickets = async () => {
+      try {
+        const data = await fetchTickets();
+        setTickets(data);
+      } catch (error) {
+        console.error('Error loading tickets:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTickets();
+  }, []);
 
   const handleCreateTicket = () => {
     router.push('/create-ticket');
@@ -26,13 +36,17 @@ const MainPage: NextPage = () => {
     router.push(`/tickets/${id}`);
   };
 
+  if (loading) {
+    return <div className="min-h-screen bg-gray-100">Loading tickets...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="flex mt-6">
         {/* Main Content */}
         <div className="w-4/5 p-4 overflow-y-auto">
-          {fakeTickets.map((ticket) => (
+          {tickets.map((ticket) => (
             <div
               key={ticket.id}
               onClick={() => handleTicketClick(ticket.id)}
