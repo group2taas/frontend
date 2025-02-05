@@ -8,85 +8,131 @@ import { createTicket } from '@/requests/ticket-actions';
 
 const CreateTicket = () => {
   const router = useRouter();
-  
-  const [formData, setFormData] = useState<{
-    specificTimeWindow: string;
-    clientRepresentative: any;
-    securityAssessor: any;
-    clientDate: string;
-    assessorDate: string;
-    rateLimiting: any;
-    documentationAvailable: any;
-    authenticationRequired: string;
-    applicationName: string;
-    productionUrl: string;
-    environments: string[]; 
-    applicationTypes: string[];
-    authenticationMethod: string;
-    otherAuthMethod: string;
-    userRoles: string[];
-    customRoles: string;
-    sessionManagement: string;
-    sessionTimeout: string;
-    inputFields: string;
-    inputTypes: string[];
-    sensitiveData: string[];
-    dataStorage: string[];
-    apiEndpoints: string;
-    apiMethods: string[];
-    securityControls: string[];
-    hosting: string;
-    criticalFunctions: string[];
-    complianceRequirements: string[];
-    lastAssessmentDate: string;
-    knownVulnerabilities: string;
-    criticalAssets: string;
-    timeRestrictions: string[];
-    testingLimitations: string[];
-    requiredReports: string[];
-    projectStartDate: string;
-    draftReportDue: string;
-    finalReportDue: string;
-    additionalNotes: string;
-  }>({
-    applicationName: '',
-    productionUrl: '',
-    environments: [],
-    applicationTypes: [],
-    authenticationMethod: '',
+
+  // REMOVE WHEN NOT NEEDED ANYMORE
+  const defaultValues = {
+    productionUrl: 'https://example.com',
+    environments: ['Staging', 'Development'],
+    applicationTypes: ['Web', 'API'],
+    authenticationMethod: 'Username/Password',
     otherAuthMethod: '',
-    userRoles: [],
-    customRoles: '',
-    sessionManagement: '',
-    sessionTimeout: '',
-    inputFields: '',
-    inputTypes: [],
-    sensitiveData: [],
-    dataStorage: [],
-    apiEndpoints: '',
-    apiMethods: [],
-    securityControls: [],
-    hosting: '',
-    criticalFunctions: [],
-    complianceRequirements: [],
-    lastAssessmentDate: '',
-    knownVulnerabilities: '',
-    criticalAssets: '',
-    timeRestrictions: [],
-    testingLimitations: [],
-    requiredReports: [],
-    projectStartDate: '',
-    draftReportDue: '',
-    finalReportDue: '',
-    additionalNotes: '',
-    authenticationRequired: '', 
-    rateLimiting: '', 
-    documentationAvailable: '', 
-    specificTimeWindow: '', 
-    clientRepresentative: '',
-    securityAssessor: '', 
-    clientDate: '',
-    assessorDate: '',
+    userRoles: ['Regular Users', 'Administrators'],
+    customRoles: '2',
+    sessionManagement: 'JWT',
+    sessionTimeout: '30 minutes',
+    inputFields: '5',
+    inputTypes: ['Free text fields', 'File uploads'],
+    sensitiveData: ['Personal Information', 'Financial Data'],
+    dataStorage: ['Cloud Storage'],
+    apiEndpoints: '10',
+    apiMethods: ['GET', 'POST'],
+    securityControls: ['WAF', 'Load Balancer'],
+    hosting: 'Cloud',
+    criticalFunctions: ['Financial Transactions', 'User Data Management'],
+    complianceRequirements: ['ISO 27001'],
+    lastAssessmentDate: '2024-01-01',
+    knownVulnerabilities: 'None',
+    criticalAssets: 'Database, API',
+    timeRestrictions: ['Business Hours Only'],
+    testingLimitations: ['No Destructive Testing'],
+    requiredReports: ['Executive Summary', 'Technical Details'],
+    projectStartDate: '2024-02-01',
+    draftReportDue: '2024-03-01',
+    finalReportDue: '2024-04-01',
+    additionalNotes: 'No additional notes.',
+    authenticationRequired: 'Yes',
+    rateLimiting: 'Yes',
+    documentationAvailable: 'Yes',
+    specificTimeWindow: '',
+    clientRepresentative: 'John Doe',
+    securityAssessor: 'Jane Smith',
+    clientDate: '2024-02-10',
+    assessorDate: '2024-02-11',
+  };
+  
+  // const [formData, setFormData] = useState<{
+  //   specificTimeWindow: string;
+  //   clientRepresentative: any;
+  //   securityAssessor: any;
+  //   clientDate: string;
+  //   assessorDate: string;
+  //   rateLimiting: any;
+  //   documentationAvailable: any;
+  //   authenticationRequired: string;
+  //   applicationName: string;
+  //   productionUrl: string;
+  //   environments: string[]; 
+  //   applicationTypes: string[];
+  //   authenticationMethod: string;
+  //   otherAuthMethod: string;
+  //   userRoles: string[];
+  //   customRoles: string;
+  //   sessionManagement: string;
+  //   sessionTimeout: string;
+  //   inputFields: string;
+  //   inputTypes: string[];
+  //   sensitiveData: string[];
+  //   dataStorage: string[];
+  //   apiEndpoints: string;
+  //   apiMethods: string[];
+  //   securityControls: string[];
+  //   hosting: string;
+  //   criticalFunctions: string[];
+  //   complianceRequirements: string[];
+  //   lastAssessmentDate: string;
+  //   knownVulnerabilities: string;
+  //   criticalAssets: string;
+  //   timeRestrictions: string[];
+  //   testingLimitations: string[];
+  //   requiredReports: string[];
+  //   projectStartDate: string;
+  //   draftReportDue: string;
+  //   finalReportDue: string;
+  //   additionalNotes: string;
+  // }>({
+  //   applicationName: '',
+  //   productionUrl: '',
+  //   environments: [],
+  //   applicationTypes: [],
+  //   authenticationMethod: '',
+  //   otherAuthMethod: '',
+  //   userRoles: [],
+  //   customRoles: '',
+  //   sessionManagement: '',
+  //   sessionTimeout: '',
+  //   inputFields: '',
+  //   inputTypes: [],
+  //   sensitiveData: [],
+  //   dataStorage: [],
+  //   apiEndpoints: '',
+  //   apiMethods: [],
+  //   securityControls: [],
+  //   hosting: '',
+  //   criticalFunctions: [],
+  //   complianceRequirements: [],
+  //   lastAssessmentDate: '',
+  //   knownVulnerabilities: '',
+  //   criticalAssets: '',
+  //   timeRestrictions: [],
+  //   testingLimitations: [],
+  //   requiredReports: [],
+  //   projectStartDate: '',
+  //   draftReportDue: '',
+  //   finalReportDue: '',
+  //   additionalNotes: '',
+  //   authenticationRequired: '', 
+  //   rateLimiting: '', 
+  //   documentationAvailable: '', 
+  //   specificTimeWindow: '', 
+  //   clientRepresentative: '',
+  //   securityAssessor: '', 
+  //   clientDate: '',
+  //   assessorDate: '',
+  // });
+
+  const [formData, setFormData] = useState({
+    applicationName: '',
+    ...defaultValues,
   });
 
   const handleChange = (

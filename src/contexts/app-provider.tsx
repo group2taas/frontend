@@ -34,34 +34,54 @@ const AppProviderContent = ({ children }: Props) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       dispatch(resetState());
+  
       if (user) {
-        const existingToken = getToken();
-        if (!existingToken) {
-
-          const token = await user.getIdToken();
-          const { access } = await exchangeFirebaseToken(token);
-          storeToken(access);
-
+        let accessToken = getToken();
+  
+        if (!accessToken) {
+          const firebaseToken = await user.getIdToken();
+          const response = await exchangeFirebaseToken(firebaseToken);
+  
+          if (response?.access) {
+            storeToken(response.access);
+            accessToken = response.access;
+          } else {
+            return;
+          }
         }
-
-        const userProfile = await fetchUserProfile();
-        dispatch(setUser(user.toJSON() as User));
-        dispatch(setUserProfile(userProfile));
-        
-        if (pathname === '/login') {
-          router.push('/');
+  
+        try {
+          const userProfile = await fetchUserProfile();
+          
+          if (!userProfile) {
+            throw new Error("User profile missing");
+          }
+  
+          dispatch(setUser(user.toJSON() as User));
+          dispatch(setUserProfile(userProfile));
+  
+          if (pathname === '/login') {
+            router.push('/');
+          }
+        } catch (error) {
+          console.error("Failed to fetch user profile:", error);
+          deleteToken();
+          dispatch(setUser(null));
+          dispatch(setUserProfile(null));
+          router.push('/login');
         }
       } else {
+        console.log("User not found, redirecting to login.");
         deleteToken();
         dispatch(setUser(null));
         dispatch(setUserProfile(null));
-
-        if ( pathname !== '/login' && pathname !== '/signup') {
+  
+        if (pathname !== '/login' && pathname !== '/signup') {
           router.push('/login');
         }
       }
     });
-
+  
     return unsubscribe;
   }, [dispatch, router, pathname]);
 
