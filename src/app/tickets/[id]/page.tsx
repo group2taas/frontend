@@ -35,29 +35,6 @@ const TicketDetailPage = () => {
     return <p className="text-center mt-10">The tests are being conducted, please come back in awhile.</p>;
   }
 
-  if (ticket.status === Status.APPROVAL) {
-    return (
-      <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-        <h1 className="text-2xl font-bold mb-4">Approval Details</h1>
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border border-gray-300 p-2">Field</th>
-              <th className="border border-gray-300 p-2">Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Add rows here */}
-          </tbody>
-        </table>
-        <div className="flex justify-between mt-4">
-          <button className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">Confirm</button>
-          <button className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700">Cancel</button>
-        </div>
-      </div>
-    );
-  }
-
   if (ticket.status === Status.COMPLETED) {
     const data = [
       { name: 'Jan', value: 400 },

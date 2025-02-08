@@ -42,7 +42,6 @@ export const deleteTicket = async (ticketId: number): Promise<void> => {
 const mapBackendStatus = (status: string): Status => {
   switch (status) {
     case 'new': return Status.ESTIMATING_TESTS;
-    case 'pending': return Status.APPROVAL;
     case 'testing': return Status.TESTING;
     case 'completed': return Status.COMPLETED;
     default: return Status.ESTIMATING_TESTS;
