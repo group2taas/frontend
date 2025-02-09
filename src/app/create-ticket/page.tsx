@@ -5,6 +5,7 @@ import Navbar from '@/components/navbar';
 import { useRouter } from 'next/navigation';
 import Accordion from '@/components/accordion';
 import { createTicket } from '@/requests/ticket-actions';
+import { createInterview } from '@/requests/interview-actions';
 
 const CreateTicket = () => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const CreateTicket = () => {
     userRoles: ['Regular Users', 'Administrators'],
     customRoles: '2',
     sessionManagement: 'JWT',
-    sessionTimeout: '30 minutes',
+    sessionTimeout: '30',
     inputFields: '5',
     inputTypes: ['Free text fields', 'File uploads'],
     sensitiveData: ['Personal Information', 'Financial Data'],
@@ -159,7 +160,8 @@ const CreateTicket = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createTicket(formData);
+      const newTicket = await createTicket(formData);
+      await createInterview(newTicket.id, formData);
       router.push('/');
     } catch (error) {
       alert('Failed to create ticket. Please try again.');

@@ -13,9 +13,8 @@ export const fetchTickets = async (): Promise<Tickets[]> => {
 };
 
 export const createTicket = async (formData: any): Promise<Tickets> => {
-  const response = await axiosInstance.post('/tickets/create', {
+  const response = await axiosInstance.post('/tickets/create/', {
     title: formData.applicationName,
-    details: formData
   });
   return {
     id: response.data.id,
