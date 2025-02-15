@@ -5,11 +5,35 @@ import { useParams } from 'next/navigation';
 import { getTicket } from '@/requests/ticket-actions';
 import { Status } from '@/types/enums';
 import { Tickets } from '@/types/mongo-documents';
+import useWebSocket from '@/hooks/websocket';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
+// For show for now
+const TestingLogs = ({ ticketId }: { ticketId: string }) => {
+  const { status: wsStatus, messages } = useWebSocket(ticketId);
+
+  return (
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+      <h1 className="text-2xl font-bold mb-4">Real-Time Test Logs</h1>
+      <div className="border border-gray-300 rounded-lg bg-black text-green-400 p-4 h-64 overflow-y-auto font-mono">
+        {messages.length === 0 ? (
+          <p className="text-gray-400">Waiting for test output...</p>
+        ) : (
+          messages.map((msg, index) => (
+            <div key={index}>{msg}</div>
+          ))
+        )}
+      </div>
+      <p className="mt-2 text-sm text-gray-500">
+        WebSocket Status: <strong>{wsStatus}</strong>
+      </p>
+    </div>
+  );
+};
+
 const TicketDetailPage = () => {
-    const params = useParams();
-    const id = params?.id ? params.id.toString() : null;
+  const params = useParams();
+  const id = params?.id ? params.id.toString() : null;
   const [ticket, setTicket] = useState<Tickets | null>(null);
 
   useEffect(() => {
@@ -32,7 +56,7 @@ const TicketDetailPage = () => {
   }
 
   if (ticket.status === Status.TESTING) {
-    return <p className="text-center mt-10">The tests are being conducted, please come back in awhile.</p>;
+    return <TestingLogs ticketId={ticket.id.toString()} />;
   }
 
   if (ticket.status === Status.COMPLETED) {
