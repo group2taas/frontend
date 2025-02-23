@@ -59,6 +59,10 @@ const TicketDetailPage = () => {
     return <TestingLogs ticketId={ticket.id.toString()} />;
   }
 
+  if (ticket.status === Status.ERROR) {
+    return <p className="text-center mt-10 text-red-500">Something went wrong during testing. Check back again later.</p>;;
+  }
+
   if (ticket.status === Status.COMPLETED) {
     const data = [
       { name: 'Jan', value: 400 },

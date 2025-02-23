@@ -11,6 +11,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.17.0",
     "@reduxjs/toolkit": "^2.5.0",
+    "again": "^0.0.1",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
     "firebase": "^11.2.0",
