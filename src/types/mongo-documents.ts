@@ -14,3 +14,14 @@ export interface Tickets {
   status: Status;
   createdAt: Date;
 }
+
+export interface ResultLog {
+  test_case: string;
+  result: string;
+}
+
+export interface Results {
+  ticket_id: number;
+  logs: ResultLog[];
+  progress: number;
+}
