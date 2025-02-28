@@ -42,6 +42,7 @@ const mapBackendStatus = (status: string): Status => {
   switch (status) {
     case 'new': return Status.ESTIMATING_TESTS;
     case 'testing': return Status.TESTING;
+    case 'error': return Status.ERROR;
     case 'completed': return Status.COMPLETED;
     default: return Status.ESTIMATING_TESTS;
   }

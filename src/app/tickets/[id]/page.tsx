@@ -5,28 +5,92 @@ import { useParams } from 'next/navigation';
 import { getTicket } from '@/requests/ticket-actions';
 import { Status } from '@/types/enums';
 import { Tickets } from '@/types/mongo-documents';
+import { ResultLog } from '@/types/mongo-documents';
+import { getResult } from '@/requests/result-actions'; 
 import useWebSocket from '@/hooks/websocket';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-// For show for now
+
 const TestingLogs = ({ ticketId }: { ticketId: string }) => {
   const { status: wsStatus, messages } = useWebSocket(ticketId);
+  const [results, setResults] = useState< ResultLog[] >([]);
+  const [progress, setProgress] = useState< number >(0);
+
+  //fetch the progress of the ticket from api call
+  const fetchProgress = async () => {
+    try {
+      const result = await getResult(Number(ticketId));
+      setProgress(result.progress);
+    } catch (error) {
+      console.error("Error fetching progress:", error);
+    }
+  };
+
+  //initial loading of page will load based on api call
+  useEffect(() => {
+    const fetchInitialLogs = async () => {
+      try {
+        const result = await getResult(Number(ticketId));
+        
+        const logs: ResultLog[] = result.logs.map((log) => 
+          ({
+            test_case: log.test_case,
+            result: log.result
+          })
+        )
+
+        setResults(logs)
+        setProgress(result.progress)
+    } catch (error) {
+      console.error("Error fetching logs", error)
+    }
+  };
+
+    fetchInitialLogs(); 
+  }, [ticketId]);
+
+  //check for new messages going through the websocket, will update the page in real time
+  useEffect(() => {
+    if (messages.length > 0) {
+      const message = messages[messages.length - 1];
+      console.log("Message received:", message);
+      try {
+        const jsonData = JSON.parse(message);
+        if (jsonData.result && jsonData.test_case) {
+          setResults((prev) => [...prev, {test_case: jsonData.test_case, result: jsonData.result}]);
+
+        }
+
+        fetchProgress();
+      } catch (error) {
+        console.error("Error parsing log from websocket", error);
+      }
+    }
+  }, [messages]);
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+  <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-4">Real-Time Test Logs</h1>
+
       <div className="border border-gray-300 rounded-lg bg-black text-green-400 p-4 h-64 overflow-y-auto font-mono">
-        {messages.length === 0 ? (
+        {results.length === 0 ? (
           <p className="text-gray-400">Waiting for test output...</p>
         ) : (
-          messages.map((msg, index) => (
-            <div key={index}>{msg}</div>
-          ))
+          <div className="space-y-2">
+            {results.map((entry, index) => (
+              <div key={index} className="flex justify-between bg-gray-800 text-white p-2 rounded-md">
+                <span className="font-medium">{entry.test_case}</span>
+                <span className={`px-3 py-1 rounded-md ${entry.result.toLowerCase() === "Passed" ? "bg-green-500" : "bg-red-500"}`}>
+                  {entry.result}
+                </span>
+              </div>
+            ))}
+          </div>
         )}
-      </div>
-      <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-gray-500">
         WebSocket Status: <strong>{wsStatus}</strong>
-      </p>
+        </p>
+      </div>
     </div>
   );
 };
@@ -47,19 +111,27 @@ const TicketDetailPage = () => {
     }
   }, [id]);
 
-  if (!ticket) {
+  const { ticket: wsTicket } = useWebSocket(id);
+
+  const currTicket = wsTicket || ticket;
+
+  if (!currTicket) {
     return <p className="text-center mt-10">Loading ticket details...</p>;
   }
 
-  if (ticket.status === Status.ESTIMATING_TESTS) {
+  if (currTicket.status === Status.ESTIMATING_TESTS) {
     return <p className="text-center mt-10">Your ticket is under assessment, please hang tight.</p>;
   }
 
-  if (ticket.status === Status.TESTING) {
-    return <TestingLogs ticketId={ticket.id.toString()} />;
+  if (currTicket.status === Status.TESTING) {
+    return <TestingLogs ticketId={currTicket.id.toString()} />;
   }
 
-  if (ticket.status === Status.COMPLETED) {
+  if (currTicket.status === Status.ERROR) {
+    return <p className="text-center mt-10 text-red-500">Something went wrong during testing. Check back again later.</p>;;
+  }
+
+  if (currTicket.status === Status.COMPLETED) {
     const data = [
       { name: 'Jan', value: 400 },
       { name: 'Feb', value: 300 },
