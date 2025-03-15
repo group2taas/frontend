@@ -15,7 +15,16 @@ export interface Tickets {
   createdAt: Date;
 }
 
+export interface SecurityAlerts {
+  High: number;
+  Medium: number;
+  Low: number;
+  Informational: number;
+}
+
 export interface ResultLog {
+  target_url: string;
+  security_alerts: SecurityAlerts;
   test_case: string;
   result: string;
 }
@@ -24,4 +33,6 @@ export interface Results {
   ticket_id: number;
   logs: ResultLog[];
   progress: number;
+  num_tests: number;
+  pdf: string;
 }
