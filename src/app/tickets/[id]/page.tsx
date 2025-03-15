@@ -16,11 +16,13 @@ const TestingLogs = ({ ticketId }: { ticketId: string }) => {
   const { status: wsStatus, messages } = useWebSocket(ticketId);
   const [results, setResults] = useState< ResultLog[] >([]);
   const [progress, setProgress] = useState< number >(0);
+  const [numTests, setNumTests] = useState< number >(0);
 
   //fetch the progress of the ticket from api call
   const fetchProgress = async () => {
     try {
       const result = await getResult(Number(ticketId));
+      setNumTests(result.num_tests);
       setProgress(result.progress);
     } catch (error) {
       console.error("Error fetching progress:", error);
@@ -44,6 +46,7 @@ const TestingLogs = ({ ticketId }: { ticketId: string }) => {
 
         setResults(logs)
         setProgress(result.progress)
+        setNumTests(result.num_tests)
     } catch (error) {
       console.error("Error fetching logs", error)
     }
@@ -82,7 +85,7 @@ const TestingLogs = ({ ticketId }: { ticketId: string }) => {
   return (
   <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-4">Real-Time Test Logs</h1>
-      <h2 className ="text-xl font-bold mb-4 text-center">Test Progress: {progress} </h2>
+      <h2 className ="text-xl font-bold mb-4 text-center">Test Progress: {numTests !== 0 ? (progress / numTests * 100).toFixed(2) : 0}% </h2>
       <div className="border border-gray-300 rounded-lg bg-black text-green-400 p-4 h-64 overflow-y-auto font-mono">
         {results.length === 0 ? (
           <p className="text-gray-400">Waiting for test output...</p>
@@ -126,12 +129,14 @@ const TestingLogs = ({ ticketId }: { ticketId: string }) => {
 
 const TestingDashboard = ({ ticketId }: { ticketId: string }) => {
   const [results, setResults] = useState<ResultLog[]>([]);
+  const [pdfLink, setPdfLink] = useState<string | undefined>(undefined);
   
   useEffect(() => {
   const fetchResults = async () => {
     try {
       const result = await getResult(Number(ticketId));
       setResults(result.logs);
+      setPdfLink(result.pdf);
     } catch (error) {
       console.error('Error fetching results:', error);
     }
@@ -178,8 +183,9 @@ const TestingDashboard = ({ ticketId }: { ticketId: string }) => {
       <p><strong>Number of Medium Security Alerts flagged: {cumAlerts.Medium}</strong></p>
       <p><strong>Number of Low Security Alerts flagged: {cumAlerts.Low}</strong></p>
       <p><strong>Number of Informational Security Alerts flagged: {cumAlerts.Informational}</strong></p>
-      <p><strong>Test Cases Passed: {passed.length}</strong></p>
-      <p><strong>Test Cases Failed: {failed.length}</strong></p>
+      <p><strong>Total Test Cases Ran: {passed.length + failed.length}</strong></p>
+      <p className="text-green"><strong>Test Cases Passed: {passed.length}</strong></p>
+      <p className="text-red"><strong>Test Cases Failed: {failed.length}</strong></p>
       </div>
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={summaryData} margin={{ top:20, bottom:20, left: 5, right:20 }}>
@@ -192,9 +198,12 @@ const TestingDashboard = ({ ticketId }: { ticketId: string }) => {
       </ResponsiveContainer>
       <div className="mt-6 p-4 bg-gray-100 rounded-lg">
         <p className="text-lg font-semibold">Download Report</p>
-        <button className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+        {pdfLink ? (<a href={pdfLink} className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+        target="_blank" rel="noopener noreferrer">
           Download PDF
-        </button>
+        </a>) : 
+        <p><strong>No PDF Available</strong></p>}
+        
       </div>
     </div>
   );

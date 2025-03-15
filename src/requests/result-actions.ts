@@ -12,7 +12,9 @@ export const getResult = async (ticketId: number): Promise<Results> => {
         test_case: log.test_case,
         result: log.result
       })),
-      progress: response.data.progress
+      progress: response.data.progress,
+      num_tests: response.data.num_tests,
+      pdf: response.data.pdf_link || "",
     };
   };
 

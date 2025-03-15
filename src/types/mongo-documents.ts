@@ -33,4 +33,6 @@ export interface Results {
   ticket_id: number;
   logs: ResultLog[];
   progress: number;
+  num_tests: number;
+  pdf: string;
 }
