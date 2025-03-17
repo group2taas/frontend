@@ -4,211 +4,258 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { getTicket } from '@/requests/ticket-actions';
 import { Status } from '@/types/enums';
-import { Tickets } from '@/types/mongo-documents';
-import { ResultLog } from '@/types/mongo-documents';
-import { SecurityAlerts } from '@/types/mongo-documents';
+import { Tickets, ResultLog, Results } from '@/types/mongo-documents';
 import { getResult } from '@/requests/result-actions'; 
 import useWebSocket from '@/hooks/websocket';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid } from 'recharts';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip
+} from 'recharts';
+import Navbar from '@/components/navbar';
 
+const TestingLogsSimple = ({ ticketId }: { ticketId: string }) => {
+  const { messages } = useWebSocket(ticketId);
+  const [results, setResults] = useState<ResultLog[]>([]);
 
-const TestingLogs = ({ ticketId }: { ticketId: string }) => {
-  const { status: wsStatus, messages } = useWebSocket(ticketId);
-  const [results, setResults] = useState< ResultLog[] >([]);
-  const [progress, setProgress] = useState< number >(0);
-  const [numTests, setNumTests] = useState< number >(0);
-
-  //fetch the progress of the ticket from api call
-  const fetchProgress = async () => {
-    try {
-      const result = await getResult(Number(ticketId));
-      setNumTests(result.num_tests);
-      setProgress(result.progress);
-    } catch (error) {
-      console.error("Error fetching progress:", error);
-    }
-  };
-
-  //initial loading of page will load based on api call
   useEffect(() => {
     const fetchInitialLogs = async () => {
       try {
         const result = await getResult(Number(ticketId));
-        
-        const logs: ResultLog[] = result.logs.map((log) => 
-          ({
-            target_url: log.target_url,
-            security_alerts: log.security_alerts,
-            test_case: log.test_case,
-            result: log.result
-          })
-        )
+        const logs: ResultLog[] = result.logs.map((log) => ({
+          target_url: log.target_url,
+          security_alerts: log.security_alerts,
+          test_case: log.test_case,
+          result: log.result
+        }));
+        setResults(logs);
+      } catch (error) {
+        console.error('Error fetching logs', error);
+      }
+    };
 
-        setResults(logs)
-        setProgress(result.progress)
-        setNumTests(result.num_tests)
-    } catch (error) {
-      console.error("Error fetching logs", error)
-    }
-  };
-
-    fetchInitialLogs(); 
+    fetchInitialLogs();
   }, [ticketId]);
 
-  //check for new messages going through the websocket, will update the page in real time
   useEffect(() => {
     if (messages.length > 0) {
       const message = messages[messages.length - 1];
-      console.log("Message received:", message);
       try {
         const log = JSON.parse(message);
         if (log.result && log.test_case) {
-          setResults((prev) => [...prev, {target_url: log.target_url, security_alerts: log.security_alerts, test_case: log.test_case, result: log.result}]);
-
+          setResults((prev) => [
+            ...prev,
+            {
+              target_url: log.target_url,
+              security_alerts: log.security_alerts,
+              test_case: log.test_case,
+              result: log.result
+            }
+          ]);
         }
-
-        fetchProgress();
       } catch (error) {
-        console.error("Error parsing log from websocket", error);
+        console.error('Error parsing log from websocket', error);
       }
     }
   }, [messages]);
 
-  const failed = results.filter(
-    (entry, index) => entry.result?.toLowerCase() !== 'passed'
-  );
-
-  const passed = results.filter(
-    (entry, index) => entry.result?.toLowerCase() === 'passed'
-  );
-
   return (
-  <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Real-Time Test Logs</h1>
-      <h2 className ="text-xl font-bold mb-4 text-center">Test Progress: {numTests !== 0 ? (progress / numTests * 100).toFixed(2) : 0}% </h2>
-      <div className="border border-gray-300 rounded-lg bg-black text-green-400 p-4 h-64 overflow-y-auto font-mono">
-        {results.length === 0 ? (
-          <p className="text-gray-400">Waiting for test output...</p>
-        ) : (
-          <div className="space-y-2">
-            {failed.length > 0 && (<>
-            <h3 className="text-white">Failed Test Cases:</h3>
-            {failed.map((entry, index) => (
-              <div key={index} className="flex justify-between bg-gray-800 text-white p-2 rounded-md">
-                <span className="font-medium">{entry.test_case}</span>
-                <span className="px-3 py-1 rounded-md bg-red-500">
-                  {entry.result}
-                </span>
-              </div>
-            )
+    <div className="max-w-4xl mx-auto mt-10">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800 text-center">Test Logs</h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 border">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Test Case</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Result</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Target URL</th>
+              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Security Alerts</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {results.length === 0 ? (
+              <tr>
+                <td className="px-4 py-2 text-sm text-gray-500" colSpan={4}>No logs available</td>
+              </tr>
+            ) : (
+              results.map((entry, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-2 text-sm text-gray-900">{entry.test_case}</td>
+                  <td className="px-4 py-2 text-sm text-gray-900">{entry.result}</td>
+                  <td className="px-4 py-2 text-sm text-gray-900">{entry.target_url}</td>
+                  {/* <td className="px-4 py-2 text-sm text-gray-900">{entry.security_alerts}</td> */}
+                </tr>
+              ))
             )}
-            </>
-        )} 
-        <br></br>
-        {passed.length > 0 && (<>
-            <h3 className="text-white">Passed Test Cases:</h3>
-            {passed.map((entry, index) => (
-              <div key={index} className="flex justify-between bg-gray-800 text-white p-2 rounded-md">
-                <span className="font-medium">{entry.test_case}</span>
-                <span className="px-3 py-1 rounded-md bg-green-500">
-                  {entry.result}
-                </span>
-              </div>
-            )
-            )}
-            </>
-        )}
-        </div>
-        )}
-        <p className="mt-2 text-sm text-gray-500">
-        WebSocket Status: <strong>{wsStatus}</strong>
-        </p>
-      </div>
-  </div>
-  )};
-
-const TestingDashboard = ({ ticketId }: { ticketId: string }) => {
-  const [results, setResults] = useState<ResultLog[]>([]);
-  const [pdfLink, setPdfLink] = useState<string | undefined>(undefined);
-  
-  useEffect(() => {
-  const fetchResults = async () => {
-    try {
-      const result = await getResult(Number(ticketId));
-      setResults(result.logs);
-      setPdfLink(result.pdf);
-    } catch (error) {
-      console.error('Error fetching results:', error);
-    }
-  };
-  fetchResults();
-  }, [ticketId]);
-
-  const initAlerts: SecurityAlerts = {
-    High: 0,
-    Medium: 0,
-    Low: 0,
-    Informational: 0,
-  };
-
-  const cumAlerts: SecurityAlerts = { ... initAlerts};
-
-  for (const log of results) {
-    for (const level in log.security_alerts) {
-      const alertLevel = level as keyof SecurityAlerts
-      cumAlerts[alertLevel] += log.security_alerts[alertLevel];
-    }
-  }
-
-  const failed = results.filter(
-    (entry, index) => entry.result?.toLowerCase() !== 'passed'
-  );
-
-  const passed = results.filter(
-    (entry, index) => entry.result?.toLowerCase() === 'passed'
-  );
-
-  const summaryData = [
-    { name: 'High', value: cumAlerts.High },
-    { name: 'Medium', value: cumAlerts.Medium },
-    { name: 'Low', value: cumAlerts.Low },
-    { name: 'Informational', value: cumAlerts.Informational },
-  ];
-  console.log(summaryData)
-  return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Test Results Dashboard</h1>
-      <div className="mb-4">
-      <p><strong>Number of High Security Alerts flagged: {cumAlerts.High}</strong></p>
-      <p><strong>Number of Medium Security Alerts flagged: {cumAlerts.Medium}</strong></p>
-      <p><strong>Number of Low Security Alerts flagged: {cumAlerts.Low}</strong></p>
-      <p><strong>Number of Informational Security Alerts flagged: {cumAlerts.Informational}</strong></p>
-      <p><strong>Total Test Cases Ran: {passed.length + failed.length}</strong></p>
-      <p className="text-green"><strong>Test Cases Passed: {passed.length}</strong></p>
-      <p className="text-red"><strong>Test Cases Failed: {failed.length}</strong></p>
-      </div>
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={summaryData} margin={{ top:20, bottom:20, left: 5, right:20 }}>
-          <CartesianGrid stroke="#8884d8"/>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey='value' fill='blue'/>
-        </BarChart>
-      </ResponsiveContainer>
-      <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-        <p className="text-lg font-semibold">Download Report</p>
-        {pdfLink ? (<a href={pdfLink} className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
-        target="_blank" rel="noopener noreferrer">
-          Download PDF
-        </a>) : 
-        <p><strong>No PDF Available</strong></p>}
-        
+          </tbody>
+        </table>
       </div>
     </div>
   );
+};
+
+const TestingDashboard = ({ ticketId }: { ticketId: string }) => {
+  const [result, setResult] = useState<Results | null>(null);
+
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        const resultData = await getResult(Number(ticketId));
+        setResult(resultData);
+      } catch (error) {
+        console.error('Error fetching results:', error);
+      }
+    };
+    fetchResults();
+  }, [ticketId]);
+
+  if (!result) {
+    return <div className="text-center p-8 text-gray-700">Loading test results...</div>;
   }
 
+  const failed = result.logs.filter(
+    (entry) => entry.result?.toLowerCase() !== 'passed'
+  );
+
+  const passed = result.logs.filter(
+    (entry) => entry.result?.toLowerCase() === 'passed'
+  );
+
+  const summaryData = [
+    { name: 'High', value: result.security_alerts.High || 0 },
+    { name: 'Medium', value: result.security_alerts.Medium || 0 },
+    { name: 'Low', value: result.security_alerts.Low || 0 },
+    { name: 'Informational', value: result.security_alerts.Informational || 0 }
+  ];
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto mt-8 space-y-6 bg-white p-6 shadow-md rounded-lg">
+      <div className="border border-gray-300 rounded p-4 text-center bg-gray-50">
+        <h1 className="text-2xl font-bold text-gray-800">
+          Ticket ID: {result.ticket_id}
+        </h1>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="border border-gray-300 rounded p-4 text-center bg-gray-50">
+          <h2 className="text-xl font-bold text-gray-800">Title</h2>
+          <p className="mt-2 text-gray-700">{result.title}</p>
+        </div>
+
+        <div className="border border-gray-300 rounded p-4 text-center bg-gray-50">
+          <h2 className="text-xl font-bold text-gray-800">Created at</h2>
+          <p className="mt-2 text-gray-700">{formatDate(result.created_at)}</p>
+        </div>
+
+        <div className="border border-gray-300 rounded p-4 text-center bg-gray-50">
+          <h2 className="text-xl font-bold text-gray-800">NumTests</h2>
+          <p className="mt-2 text-gray-700">{result.num_tests}</p>
+        </div>
+      </div>
+
+      {/* Dashboard */}
+      <div className="border border-gray-300 rounded p-6 bg-gray-50">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Dashboard</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div className="mb-4 text-gray-700">
+              <h3 className="font-bold mb-2 text-gray-800">Security Alerts</h3>
+              <p>
+                <span className="font-medium">High:</span>{' '}
+                {result.security_alerts.High || 0}
+              </p>
+              <p>
+                <span className="font-medium">Medium:</span>{' '}
+                {result.security_alerts.Medium || 0}
+              </p>
+              <p>
+                <span className="font-medium">Low:</span>{' '}
+                {result.security_alerts.Low || 0}
+              </p>
+              <p>
+                <span className="font-medium">Informational:</span>{' '}
+                {result.security_alerts.Informational || 0}
+              </p>
+            </div>
+
+            <div className="text-gray-700">
+              <h3 className="font-bold mb-2 text-gray-800">Test Results</h3>
+              <p>
+                <span className="font-medium">Total Tests:</span>{' '}
+                {passed.length + failed.length}
+              </p>
+              <p>
+                <span className="font-medium text-green-600">Passed:</span>{' '}
+                {passed.length}
+              </p>
+              <p>
+                <span className="font-medium text-red-600">Failed:</span>{' '}
+                {failed.length}
+              </p>
+              <p>
+                <span className="font-medium">Progress:</span>{' '}
+                {result.progress} / {result.num_tests}
+              </p>
+            </div>
+          </div>
+
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={summaryData}
+                margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" stroke="#4B5563" />
+                <YAxis stroke="#4B5563" />
+                <Tooltip />
+                <Bar dataKey="value" fill="#3B82F6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      <div className="border border-gray-300 rounded p-4 bg-gray-50">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Embedded PDF</h2>
+        {result.pdf ? (
+          <div className="w-full h-96">
+            <iframe
+              src={`${result.pdf}#view=FitH`}
+              className="w-full h-full border-0"
+              title="Test Results PDF"
+            />
+          </div>
+        ) : (
+          <p className="text-center py-8 text-gray-600">No PDF available</p>
+        )}
+      </div>
+
+      {result.pdf && (
+        <div className="border-2 border-blue-500 rounded text-center p-4 bg-gray-50">
+          <a
+            href={result.pdf}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded inline-block"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Download PDF Report
+          </a>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const TicketDetailPage = () => {
   const params = useParams();
@@ -227,30 +274,32 @@ const TicketDetailPage = () => {
   }, [id]);
 
   const { ticket: wsTicket } = useWebSocket(id);
-
   const currTicket = wsTicket || ticket;
 
-  if (!currTicket) {
-    return <p className="text-center mt-10">Loading ticket details...</p>;
-  }
-
-  if (currTicket.status === Status.ESTIMATING_TESTS) {
-    return <p className="text-center mt-10">Your ticket is under assessment, please hang tight.</p>;
-  }
-
-  if (currTicket.status === Status.TESTING || currTicket.status === Status.ERROR) {
-    return <TestingLogs ticketId={currTicket.id.toString()} />;
-  }
-
-  // if (currTicket.status === Status.ERROR) {
-  //   return <p className="text-center mt-10 text-red-500">Something went wrong during testing. Check back again later.</p>;;
-  // }
-
-  if (currTicket.status === Status.COMPLETED) {
-    return <TestingDashboard ticketId={currTicket.id.toString()} />;
-
-  return null;
-  }
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Navbar />
+      {!currTicket && (
+        <p className="text-center mt-10 text-gray-800">Loading ticket details...</p>
+      )}
+      {currTicket && currTicket.status === Status.ESTIMATING_TESTS && (
+        <p className="text-center mt-10 text-gray-800">
+          Your ticket is under assessment, please hang tight.
+        </p>
+      )}
+      {currTicket && currTicket.status === Status.ERROR && (
+        <p className="text-center mt-10 text-gray-800">
+          Your tests have ran into an error, please contact us for further clarification.
+        </p>
+      )}
+      {currTicket && currTicket.status === Status.TESTING && (
+        <TestingLogsSimple ticketId={currTicket.id.toString()} />
+      )}
+      {currTicket && currTicket.status === Status.COMPLETED && (
+        <TestingDashboard ticketId={currTicket.id.toString()} />
+      )}
+    </div>
+  );
 };
 
 export default TicketDetailPage;

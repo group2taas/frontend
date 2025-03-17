@@ -30,9 +30,19 @@ export interface ResultLog {
 }
 
 export interface Results {
+  title: string;
+  created_at: string;
   ticket_id: number;
-  logs: ResultLog[];
-  progress: number;
   num_tests: number;
-  pdf: string;
+  logs: Array<{
+    target_url: string;
+    security_alerts: any;
+    test_case: string;
+    result: string;
+  }>;
+  progress: number;
+  security_alerts: Record<string, number>;
+  alerts_detail: any[];
+  markdown?: string;
+  pdf?: string;
 }

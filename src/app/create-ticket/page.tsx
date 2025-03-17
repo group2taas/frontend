@@ -173,7 +173,7 @@ const CreateTicket = () => {
       <Navbar />
       <div className="flex justify-center items-center flex-grow">
         <div className="w-4/5 max-w-3xl bg-white shadow-lg rounded-lg p-6">
-          <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">
+          <h1 className="text-2xl font-bold mb-6 text-gray-900 text-center">
             OWASP-Based Security Testing Interview Sheet
           </h1>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -181,7 +181,7 @@ const CreateTicket = () => {
             <Accordion title="1. Application Overview" isCompleted={!!formData.applicationName && !!formData.productionUrl && formData.environments.length > 0}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="applicationName" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="applicationName" className="block text-sm font-medium text-gray-900 mb-1">
                     Application Name
                   </label>
                   <input
@@ -191,11 +191,11 @@ const CreateTicket = () => {
                     value={formData.applicationName}
                     onChange={handleChange}
                     placeholder="Enter application name"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   />
                 </div>
                 <div>
-                  <label htmlFor="productionUrl" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="productionUrl" className="block text-sm font-medium text-gray-900 mb-1">
                     Production URL
                   </label>
                   <input
@@ -205,14 +205,14 @@ const CreateTicket = () => {
                     value={formData.productionUrl}
                     onChange={handleChange}
                     placeholder="Enter production URL"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Environment for Testing</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Environment for Testing</label>
                   <div className="flex space-x-4">
                     {['Production', 'Staging', 'Development'].map((env) => (
-                      <label key={env} className="flex items-center">
+                      <label key={env} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="environments"
@@ -227,10 +227,10 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Application Type</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Application Type</label>
                   <div className="flex space-x-4">
                     {['Web', 'API', 'Mobile', 'Desktop'].map((type) => (
-                      <label key={type} className="flex items-center">
+                      <label key={type} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="applicationTypes"
@@ -250,10 +250,10 @@ const CreateTicket = () => {
             <Accordion title="2. Authentication & Access Control" isCompleted={!!formData.authenticationMethod}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Authentication Method</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Authentication Method</label>
                   <div className="space-y-2">
                     {['Username/Password', 'SSO', 'OAuth', 'Certificate-based'].map((method) => (
-                      <label key={method} className="flex items-center">
+                      <label key={method} className="flex items-center text-gray-900">
                         <input
                           type="radio"
                           name="authenticationMethod"
@@ -265,7 +265,7 @@ const CreateTicket = () => {
                         {method}
                       </label>
                     ))}
-                    <label className="flex items-center">
+                    <label className="flex items-center text-gray-900">
                       <input
                         type="radio"
                         name="authenticationMethod"
@@ -281,16 +281,16 @@ const CreateTicket = () => {
                         value={formData.otherAuthMethod}
                         onChange={handleChange}
                         placeholder="Specify"
-                        className="ml-2 border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="ml-2 border border-gray-300 rounded-lg p-1 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                       />
                     </label>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">User Roles</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">User Roles</label>
                   <div className="flex space-x-4">
                     {['Anonymous Users', 'Regular Users', 'Power Users', 'Administrators', 'System Administrators'].map((role) => (
-                      <label key={role} className="flex items-center">
+                      <label key={role} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="userRoles"
@@ -304,22 +304,22 @@ const CreateTicket = () => {
                     ))}
                   </div>
                   <div className="mt-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Number of custom roles</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-1">Number of custom roles</label>
                     <input
                       type="text"
                       name="customRoles"
                       value={formData.customRoles}
                       onChange={handleChange}
                       placeholder="Enter number"
-                      className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Session Management</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Session Management</label>
                   <div className="space-y-2">
                     {['JWT', 'Session Cookies', 'Custom Tokens'].map((session) => (
-                      <label key={session} className="flex items-center">
+                      <label key={session} className="flex items-center text-gray-900">
                         <input
                           type="radio"
                           name="sessionManagement"
@@ -333,14 +333,14 @@ const CreateTicket = () => {
                     ))}
                   </div>
                   <div className="mt-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Session timeout period</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-1">Session timeout period</label>
                     <input
                       type="text"
                       name="sessionTimeout"
                       value={formData.sessionTimeout}
                       onChange={handleChange}
                       placeholder="Enter timeout period"
-                      className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                     />
                   </div>
                 </div>
@@ -350,13 +350,11 @@ const CreateTicket = () => {
             {/* 3. Input Processing */}
             <Accordion
               title="3. Input Processing"
-              isCompleted={
-                !!formData.inputFields && formData.inputTypes.length > 0
-              }
+              isCompleted={!!formData.inputFields && formData.inputTypes.length > 0}
             >
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="inputFields" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="inputFields" className="block text-sm font-medium text-gray-900 mb-1">
                     Total number of input fields
                   </label>
                   <input
@@ -366,11 +364,11 @@ const CreateTicket = () => {
                     value={formData.inputFields}
                     onChange={handleChange}
                     placeholder="Enter total number of input fields"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Input Types Present</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Input Types Present</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       "Free text fields",
@@ -381,7 +379,7 @@ const CreateTicket = () => {
                       "Database queries",
                       "API calls",
                     ].map((inputType) => (
-                      <label key={inputType} className="flex items-center">
+                      <label key={inputType} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="inputTypes"
@@ -401,13 +399,11 @@ const CreateTicket = () => {
             {/* 4. Data Processing */}
             <Accordion
               title="4. Data Processing"
-              isCompleted={
-                formData.sensitiveData.length > 0 && formData.dataStorage.length > 0
-              }
+              isCompleted={formData.sensitiveData.length > 0 && formData.dataStorage.length > 0}
             >
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Sensitive Data Handled</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Sensitive Data Handled</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       "Personal Information",
@@ -416,7 +412,7 @@ const CreateTicket = () => {
                       "Government Data",
                       "Intellectual Property",
                     ].map((dataType) => (
-                      <label key={dataType} className="flex items-center">
+                      <label key={dataType} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="sensitiveData"
@@ -431,11 +427,11 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Data Storage</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Data Storage</label>
                   <div className="flex flex-col space-y-2">
                     {["Local Database", "Cloud Storage", "Third-party Services", "Distributed Systems"].map(
                       (storageType) => (
-                        <label key={storageType} className="flex items-center">
+                        <label key={storageType} className="flex items-center text-gray-900">
                           <input
                             type="checkbox"
                             name="dataStorage"
@@ -463,7 +459,7 @@ const CreateTicket = () => {
             >
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="apiEndpoints" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="apiEndpoints" className="block text-sm font-medium text-gray-900 mb-1">
                     Number of Endpoints
                   </label>
                   <input
@@ -473,14 +469,14 @@ const CreateTicket = () => {
                     value={formData.apiEndpoints || ''}
                     onChange={handleChange}
                     placeholder="Enter number of endpoints"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Authentication Required</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Authentication Required</label>
                   <div className="flex space-x-4">
                     {['Yes', 'No'].map((option) => (
-                      <label key={option} className="flex items-center">
+                      <label key={option} className="flex items-center text-gray-900">
                         <input
                           type="radio"
                           name="authenticationRequired"
@@ -495,10 +491,10 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Rate Limiting</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Rate Limiting</label>
                   <div className="flex space-x-4">
                     {['Yes', 'No'].map((option) => (
-                      <label key={option} className="flex items-center">
+                      <label key={option} className="flex items-center text-gray-900">
                         <input
                           type="radio"
                           name="rateLimiting"
@@ -513,10 +509,10 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Documentation Available</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Documentation Available</label>
                   <div className="flex space-x-4">
                     {['Yes', 'No'].map((option) => (
-                      <label key={option} className="flex items-center">
+                      <label key={option} className="flex items-center text-gray-900">
                         <input
                           type="radio"
                           name="documentationAvailable"
@@ -531,10 +527,10 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">API Methods Used</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">API Methods Used</label>
                   <div className="flex flex-col space-y-2">
                     {['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'Other'].map((method) => (
-                      <label key={method} className="flex items-center">
+                      <label key={method} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="apiMethods"
@@ -554,16 +550,14 @@ const CreateTicket = () => {
             {/* 6. Infrastructure */}
             <Accordion
               title="6. Infrastructure"
-              isCompleted={
-                formData.securityControls?.length > 0 && !!formData.hosting
-              }
+              isCompleted={formData.securityControls?.length > 0 && !!formData.hosting}
             >
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Security Controls Present</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Security Controls Present</label>
                   <div className="flex flex-col space-y-2">
                     {['WAF', 'IPS/IDS', 'Load Balancer', 'Anti-DDoS', 'API Gateway'].map((control) => (
-                      <label key={control} className="flex items-center">
+                      <label key={control} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="securityControls"
@@ -578,10 +572,10 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Hosting</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Hosting</label>
                   <div className="flex flex-col space-y-2">
                     {['Cloud', 'On-premises', 'Hybrid'].map((hostingType) => (
-                      <label key={hostingType} className="flex items-center">
+                      <label key={hostingType} className="flex items-center text-gray-900">
                         <input
                           type="radio"
                           name="hosting"
@@ -601,13 +595,11 @@ const CreateTicket = () => {
             {/* 7. Business Logic */}
             <Accordion
               title="7. Business Logic"
-              isCompleted={
-                formData.criticalFunctions?.length > 0
-              }
+              isCompleted={formData.criticalFunctions?.length > 0}
             >
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Critical Functions</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Critical Functions</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       'Financial Transactions',
@@ -616,7 +608,7 @@ const CreateTicket = () => {
                       'System Configuration',
                       'Report Generation',
                     ].map((functionality) => (
-                      <label key={functionality} className="flex items-center">
+                      <label key={functionality} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="criticalFunctions"
@@ -644,7 +636,7 @@ const CreateTicket = () => {
             >
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Compliance Requirements</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Compliance Requirements</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       'PCI DSS',
@@ -654,7 +646,7 @@ const CreateTicket = () => {
                       'SOC 2',
                       'Other',
                     ].map((requirement) => (
-                      <label key={requirement} className="flex items-center">
+                      <label key={requirement} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="complianceRequirements"
@@ -669,7 +661,7 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="lastAssessmentDate" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="lastAssessmentDate" className="block text-sm font-medium text-gray-900 mb-1">
                     Last Security Assessment Date
                   </label>
                   <input
@@ -682,7 +674,7 @@ const CreateTicket = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="knownVulnerabilities" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="knownVulnerabilities" className="block text-sm font-medium text-gray-900 mb-1">
                     Known Vulnerabilities
                   </label>
                   <textarea
@@ -691,7 +683,7 @@ const CreateTicket = () => {
                     value={formData.knownVulnerabilities || ''}
                     onChange={handleChange}
                     placeholder="List known vulnerabilities"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   ></textarea>
                 </div>
               </div>
@@ -700,20 +692,18 @@ const CreateTicket = () => {
             {/* 9. Testing Constraints */}
             <Accordion
               title="9. Testing Constraints"
-              isCompleted={
-                formData.timeRestrictions?.length > 0 || formData.testingLimitations?.length > 0
-              }
+              isCompleted={formData.timeRestrictions?.length > 0 || formData.testingLimitations?.length > 0}
             >
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Time Restrictions</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Time Restrictions</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       'Business Hours Only',
                       '24/7 Allowed',
                       'Specific Time Window',
                     ].map((restriction) => (
-                      <label key={restriction} className="flex items-center">
+                      <label key={restriction} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="timeRestrictions"
@@ -728,7 +718,7 @@ const CreateTicket = () => {
                   </div>
                   {formData.timeRestrictions?.includes('Specific Time Window') && (
                     <div className="mt-2">
-                      <label htmlFor="specificTimeWindow" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="specificTimeWindow" className="block text-sm font-medium text-gray-900 mb-1">
                         Specify Time Window
                       </label>
                       <input
@@ -738,13 +728,13 @@ const CreateTicket = () => {
                         value={formData.specificTimeWindow || ''}
                         onChange={handleChange}
                         placeholder="Enter time window"
-                        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                       />
                     </div>
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Testing Limitations</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Testing Limitations</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       'No Destructive Testing',
@@ -752,7 +742,7 @@ const CreateTicket = () => {
                       'No Performance Testing',
                       'Other',
                     ].map((limitation) => (
-                      <label key={limitation} className="flex items-center">
+                      <label key={limitation} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="testingLimitations"
@@ -772,16 +762,11 @@ const CreateTicket = () => {
             {/* 10. Deliverables */}
             <Accordion
               title="10. Deliverables"
-              isCompleted={
-                formData.requiredReports?.length > 0 &&
-                !!formData.projectStartDate &&
-                !!formData.draftReportDue &&
-                !!formData.finalReportDue
-              }
+              isCompleted={formData.requiredReports?.length > 0 && !!formData.projectStartDate && !!formData.draftReportDue && !!formData.finalReportDue}
             >
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Required Reports</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Required Reports</label>
                   <div className="flex flex-col space-y-2">
                     {[
                       'Executive Summary',
@@ -790,7 +775,7 @@ const CreateTicket = () => {
                       'Compliance Mapping',
                       'Risk Rating',
                     ].map((report) => (
-                      <label key={report} className="flex items-center">
+                      <label key={report} className="flex items-center text-gray-900">
                         <input
                           type="checkbox"
                           name="requiredReports"
@@ -805,7 +790,7 @@ const CreateTicket = () => {
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="projectStartDate" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="projectStartDate" className="block text-sm font-medium text-gray-900 mb-1">
                     Project Start Date
                   </label>
                   <input
@@ -818,7 +803,7 @@ const CreateTicket = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="draftReportDue" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="draftReportDue" className="block text-sm font-medium text-gray-900 mb-1">
                     Draft Report Due
                   </label>
                   <input
@@ -831,7 +816,7 @@ const CreateTicket = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="finalReportDue" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="finalReportDue" className="block text-sm font-medium text-gray-900 mb-1">
                     Final Report Due
                   </label>
                   <input
@@ -853,7 +838,7 @@ const CreateTicket = () => {
             >
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="additionalNotes" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="additionalNotes" className="block text-sm font-medium text-gray-900 mb-1">
                     Additional Information
                   </label>
                   <textarea
@@ -862,7 +847,7 @@ const CreateTicket = () => {
                     value={formData.additionalNotes || ''}
                     onChange={handleChange}
                     placeholder="Enter any additional information"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   ></textarea>
                 </div>
               </div>
@@ -875,7 +860,7 @@ const CreateTicket = () => {
             >
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="clientRepresentative" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="clientRepresentative" className="block text-sm font-medium text-gray-900 mb-1">
                     Client Representative
                   </label>
                   <input
@@ -885,11 +870,11 @@ const CreateTicket = () => {
                     value={formData.clientRepresentative || ''}
                     onChange={handleChange}
                     placeholder="Enter client representative"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   />
                 </div>
                 <div>
-                  <label htmlFor="clientDate" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="clientDate" className="block text-sm font-medium text-gray-900 mb-1">
                     Date
                   </label>
                   <input
@@ -902,7 +887,7 @@ const CreateTicket = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="securityAssessor" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="securityAssessor" className="block text-sm font-medium text-gray-900 mb-1">
                     Security Assessor
                   </label>
                   <input
@@ -912,11 +897,11 @@ const CreateTicket = () => {
                     value={formData.securityAssessor || ''}
                     onChange={handleChange}
                     placeholder="Enter security assessor"
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-600"
                   />
                 </div>
                 <div>
-                  <label htmlFor="assessorDate" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="assessorDate" className="block text-sm font-medium text-gray-900 mb-1">
                     Date
                   </label>
                   <input
@@ -930,7 +915,6 @@ const CreateTicket = () => {
                 </div>
               </div>
             </Accordion>
-
 
             <div>
               <button
