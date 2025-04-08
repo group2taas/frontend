@@ -231,7 +231,7 @@ const TestingDashboard = ({ ticketId }: { ticketId: string }) => {
         {result.pdf ? (
           <div className="w-full h-96">
             <iframe
-              src={`${result.pdf}#view=FitH`}
+              src={result.embeddable_pdf_url}
               className="w-full h-full border-0"
               title="Test Results PDF"
             />

@@ -20,6 +20,7 @@ export const getResult = async (ticketId: number): Promise<Results> => {
     security_alerts: response.data.security_alerts,
     alerts_detail: response.data.alerts_detail,
     markdown: response.data.markdown,
-    pdf: response.data.pdf,
+    pdf: response.data.pdf_link,
+    embeddable_pdf_url: response.data.embeddable_pdf_url,
   };
 };

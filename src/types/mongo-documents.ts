@@ -45,4 +45,5 @@ export interface Results {
   alerts_detail: any[];
   markdown?: string;
   pdf?: string;
+  embeddable_pdf_url?: string;
 }
