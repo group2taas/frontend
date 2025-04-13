@@ -21,11 +21,16 @@ import Navbar from '@/components/navbar';
 const TestingLogsSimple = ({ ticketId }: { ticketId: string }) => {
   const { messages } = useWebSocket(ticketId);
   const [results, setResults] = useState<ResultLog[]>([]);
+  const [progress, setProgress] = useState(0);
+  const [numTests, setNumTests] = useState(0);
 
   useEffect(() => {
     const fetchInitialLogs = async () => {
       try {
         const result = await getResult(Number(ticketId));
+        setProgress(result.progress);
+        setNumTests(result.num_tests);
+        
         const logs: ResultLog[] = result.logs.map((log) => ({
           target_url: log.target_url,
           security_alerts: log.security_alerts,
@@ -39,6 +44,9 @@ const TestingLogsSimple = ({ ticketId }: { ticketId: string }) => {
     };
 
     fetchInitialLogs();
+    
+    const intervalId = setInterval(fetchInitialLogs, 5000);
+    return () => clearInterval(intervalId);
   }, [ticketId]);
 
   useEffect(() => {
@@ -66,6 +74,21 @@ const TestingLogsSimple = ({ ticketId }: { ticketId: string }) => {
   return (
     <div className="max-w-4xl mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-4 text-gray-800 text-center">Test Logs</h1>
+      
+      {/* Progress Bar */}
+      <div className="mb-8 bg-gray-50 p-4 rounded-lg border border-gray-300">
+        <div className="flex justify-between mb-2">
+          <h3 className="font-bold text-gray-800">Test Progress</h3>
+          <span className="text-gray-700">{progress} of {numTests} tests completed</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-4">
+          <div 
+            className="bg-blue-500 h-4 rounded-full transition-all duration-500" 
+            style={{ width: numTests > 0 ? `${(progress / numTests) * 100}%` : '0%' }}
+          ></div>
+        </div>
+      </div>
+      
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 border">
           <thead className="bg-gray-50">
